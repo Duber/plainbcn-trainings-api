@@ -21,8 +21,8 @@ const data = [
     res.send()
 })
 
-app.get('/skills', (req, res) => {
-    res.send(data)
+app.get('/api/skills', (req, res) => {
+    res.json(data)
 })
 
 app.listen(port, () => {
