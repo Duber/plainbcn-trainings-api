@@ -1,11 +1,14 @@
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
 }
+const cors = require('cors');
 const express = require('express')
 const fetch = require("node-fetch");
 
 const app = express()
 const port = 3001
+
+app.use(cors())
 
 app.get('/', (req, res) => {
     res.send()
@@ -14,7 +17,7 @@ app.get('/', (req, res) => {
 app.get('/api/skills', async (req, res) => {
     const url = `https://api.airtable.com/v0/appIJ1OyA5ly2fcib/Skills?api_key=${process.env.AIRTABLE_KEY}`
     let data = await fetch(url).then((result) => result.json())
-    data = data.records.map((record)=>{
+    data = data.records.map((record) => {
         return {
             id: record.id,
             area: record.fields.Area,
