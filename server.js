@@ -19,16 +19,16 @@ server.get('/', (req, res) => {
 })
 
 server.use(passport.initialize());
-var options =  {
+var options = {
     identityMetadata: "https://login.microsoftonline.com/8c4daf01-5412-4589-86ff-f5efa0c2834f/v2.0/.well-known/openid-configuration",
     clientID: "d3e21b0d-1460-45e7-8854-32333791077c",
     issuer: "https://login.microsoftonline.com/8c4daf01-5412-4589-86ff-f5efa0c2834f/v2.0",
     loggingLevel: "error",
     audience: "24ebf232-d6f5-4e7b-bacd-e95ea35fca58",
     passReqToCallback: false
-  };
+};
 var bearerStrategy = new passportAzureAd.BearerStrategy(options, function (token, done) {
-    done(null, {}, token);
+    done(null, { email: token.preferred_username }, token);
 });
 passport.use(bearerStrategy);
 
@@ -43,7 +43,7 @@ server.get('/api/skills', passport.authenticate("oauth-bearer", { session: false
             area: record.fields.Area,
             level: record.fields.Level,
             title: record.fields.Name,
-            accomplished: false
+            accomplished: 'Name (from People)' in record.fields && record.fields['Name (from People)'].includes(req.user.email)
         }
     })
     res.json(data)
