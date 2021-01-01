@@ -1,9 +1,11 @@
+import cors from 'cors'
+import express from 'express'
+import fetch from 'node-fetch'
+import dotenv from 'dotenv'
+
 if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config();
+    dotenv.config();
 }
-const cors = require('cors');
-const express = require('express')
-const fetch = require("node-fetch");
 
 const server = express()
 const port = 3001
