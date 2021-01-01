@@ -5,16 +5,16 @@ const cors = require('cors');
 const express = require('express')
 const fetch = require("node-fetch");
 
-const app = express()
+const server = express()
 const port = 3001
 
-app.use(cors())
+server.use(cors())
 
-app.get('/', (req, res) => {
+server.get('/', (req, res) => {
     res.send()
 })
 
-app.get('/api/skills', async (req, res) => {
+server.get('/api/skills', async (req, res) => {
     const url = `https://api.airtable.com/v0/appIJ1OyA5ly2fcib/Skills?api_key=${process.env.AIRTABLE_KEY}`
     let data = await fetch(url).then((result) => result.json())
     data = data.records.map((record) => {
@@ -29,6 +29,6 @@ app.get('/api/skills', async (req, res) => {
     res.json(data)
 })
 
-app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
+server.listen(port, () => {
+    console.log(`Server listening at port ${port}`)
 })
