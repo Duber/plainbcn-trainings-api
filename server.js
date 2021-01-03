@@ -1,8 +1,9 @@
 import cors from 'cors'
 import express from 'express'
-import fetch from 'node-fetch'
 import dotenv from 'dotenv'
 import auth from './auth.js'
+import { skillService } from './skill-service.js'
+import UserSkillMapper from './user-skill-mapper.js'
 
 if (process.env.NODE_ENV !== 'production') {
     dotenv.config();
@@ -21,18 +22,9 @@ server.use(auth)
 
 server.get('/api/skills', async (req, res) => {
     console.log("User info: ", req.user);
-    const url = `https://api.airtable.com/v0/appIJ1OyA5ly2fcib/Skills?api_key=${process.env.AIRTABLE_KEY}`
-    let data = await fetch(url).then((result) => result.json())
-    data = data.records.map((record) => {
-        return {
-            id: record.id,
-            area: record.fields.Area,
-            level: record.fields.Level,
-            title: record.fields.Name,
-            accomplished: 'Name (from People)' in record.fields && record.fields['Name (from People)'].includes(req.user.email)
-        }
-    })
-    res.json(data)
+    const skills = await skillService.getAll()
+    let userSkills = new UserSkillMapper().Map(skills, req.user.email)
+    res.json(userSkills)
 })
 
 server.listen(port, () => {
