@@ -9,7 +9,6 @@ const auth = async (req, res, next) => {
         if (decodedtoken.iss !== process.env.TOKEN_ISSUER) {
             throw new Error('Unexpected token issuer')
         }
-        console.log(decodedtoken)
         req.user = { email: decodedtoken.preferred_username }
         next()
     } catch (error) {

@@ -21,7 +21,6 @@ server.get('/', (req, res) => {
 server.use(auth)
 
 server.get('/api/skills', async (req, res) => {
-    console.log("User info: ", req.user);
     const skills = await skillService.getAll()
     let userSkills = new UserSkillMapper().Map(skills, req.user.email)
     res.json(userSkills)
