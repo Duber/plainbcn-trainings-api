@@ -18,6 +18,8 @@ Response schema:
 ```
 
 ## RUNNING LOCALLY
+Create your .env file based on .env.example.
+
 ```
 npm install
 npm run dev
