@@ -1,77 +1,41 @@
 // Original: https://gitlab.com/aquator/node-get-keycloak-public-key/-/blob/master/index.js
-import http from 'http';
-import https from 'https';
+import cache from 'memory-cache'
+import fetch from 'node-fetch'
 
 const BEGIN_KEY = '-----BEGIN RSA PUBLIC KEY-----\n';
 const END_KEY = '\n-----END RSA PUBLIC KEY-----\n';
+const KEY_CACHE_DURATION = 300000
 
 export default async function DownloadPublicKey(keysUrl, kid) {
-  return fetch(keysUrl, kid)
+  const pemCacheKey = `${keysUrl}_${kid}`
+  let pem = cache.get(pemCacheKey)
+  if (!pem) {
+    const keys = await downloadPublicKeys(keysUrl);
+    const key = getKeyByKid(keys, kid);
+    pem = buildPEM(key.n, key.e)
+    cache.put(pemCacheKey, pem, KEY_CACHE_DURATION)
+  }
+  return pem
 };
 
-async function fetch(url, kid) {
-  const response = await getJson(url);
-  const key = getKey(response, kid);
-  if (!key) {
-    throw new Error(`Can't find key for kid "${kid}" in response.`);
+async function downloadPublicKeys(url) {
+  let keys = cache.get(url)
+  if (!keys) {
+    const res = await fetch(url)
+    let data = await res.json()
+    keys = data.keys
+    cache.put(url, keys, KEY_CACHE_DURATION)
   }
-  verify(key);
-  return getPublicKey(key.n, key.e);
+  return keys
 }
 
-function getJson(url) {
-  return new Promise((resolve, reject) => {
-    const agent = url.startsWith('https') ? https : http;
-    agent.get(url, (res) => {
-      if (!valid(res)) {
-        res.resume();
-        reject(new Error(`Status: ${res.statusCode}, Content-type: ${res.headers['content-type']}`));
-      }
-      parse(res)
-        .then(result => resolve(result))
-        .catch(error => reject(error));
-    }).on('error', (e) => { reject(e); });
-  });
-}
-
-function valid(response) {
-  return response.statusCode === 200;
-}
-
-function parse(response) {
-  return new Promise((resolve, reject) => {
-    let rawData = '';
-    response.setEncoding('utf8');
-    response.on('data', (chunk) => { rawData += chunk; });
-    response.on('end', () => {
-      try {
-        const parsedData = JSON.parse(rawData);
-        resolve(parsedData);
-      } catch (e) {
-        reject(e);
-      }
-    });
-  });
-}
-
-function getKey(response, kid) {
-  return Object.hasOwnProperty.call(response, 'keys')
-    ? response.keys.find(k => k.kid === kid)
-    : undefined;
-}
-
-function verify(key) {
-  if (!(key.n && key.e)) {
-    throw new Error('Can\'t find modulus or exponent in key.');
-  }
-  if (key.kty !== 'RSA') {
-    throw new Error('Key type (kty) must be RSA.');
-  }
+function getKeyByKid(keys, kid) {
+  return keys.find(k => k.kid === kid)
 }
 
 // Based on tracker1's node-rsa-pem-from-mod-exp module.
 // See https://github.com/tracker1/node-rsa-pem-from-mod-exp
-function getPublicKey(modulus, exponent) {
+function buildPEM(modulus, exponent) {
   const mod = convertToHex(modulus);
   const exp = convertToHex(exponent);
   const encModLen = encodeLenght(mod.length / 2);
