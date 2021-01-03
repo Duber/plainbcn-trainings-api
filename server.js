@@ -4,11 +4,13 @@ import dotenv from 'dotenv'
 import auth from './auth.js'
 import { skillService } from './skill-service.js'
 import UserSkillMapper from './user-skill-mapper.js'
+import appInsights from 'applicationinsights'
 
 if (process.env.NODE_ENV !== 'production') {
     dotenv.config();
 }
 
+appInsights.setup().start()
 const server = express()
 const port = process.env.PORT || 3001
 
