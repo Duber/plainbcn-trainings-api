@@ -6,6 +6,9 @@ const auth = async (req, res, next) => {
         const token = req.header('Authorization').replace('Bearer ', '')
         const key = await getKey(token)
         const decodedtoken = jwt.verify(token, key)
+        if (decodedtoken.iss !== process.env.TOKEN_ISSUER) {
+            throw new Error('Unexpected token issuer')
+        }
         console.log(decodedtoken)
         req.user = { email: decodedtoken.preferred_username }
         next()
@@ -15,7 +18,7 @@ const auth = async (req, res, next) => {
     }
 }
 
-function getKey(token){
+function getKey(token) {
     const decodedToken = jwt.decode(token, { complete: true })
     const keysUrl = `https://login.microsoftonline.com/${decodedToken.payload.tid}/discovery/v2.0/keys`
     return DownloadPublicKey(keysUrl, decodedToken.header.kid)
