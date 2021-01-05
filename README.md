@@ -17,7 +17,14 @@ Response schema:
 }]
 ```
 
-## RUNNING LOCALLY
+## Development
+
+### AAD APP
+Create an AAD APP representing this api and:
+- update its manifest with ```"accessTokenAcceptedVersion": 2```
+- in expose an api, add scope 'auth' and authorize web client app to it
+
+### Running locally
 Create your .env file based on .env.example.
 
 ```
