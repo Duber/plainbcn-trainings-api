@@ -13,7 +13,7 @@ Response schema:
     "area": "",
     "level": "",
     "title": "",
-    "accomplished": false
+    "accomplished": true/false/null
 }]
 ```
 
