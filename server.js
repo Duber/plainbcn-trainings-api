@@ -1,10 +1,12 @@
 import cors from 'cors'
 import express from 'express'
 import dotenv from 'dotenv'
-import auth from './auth.js'
+import { getKeysUrl } from './openid-tools.js'
 import { skillService } from './skill-service.js'
 import UserSkillMapper from './user-skill-mapper.js'
 import appInsights from 'applicationinsights'
+import jwt from 'express-jwt'
+import jwksRsa from 'jwks-rsa'
 
 if (process.env.NODE_ENV !== 'production') {
     dotenv.config();
@@ -20,11 +22,18 @@ server.get('/', (req, res) => {
     res.send()
 })
 
-server.use(auth)
+const keysUrl = await getKeysUrl(process.env.TOKEN_ISSUER)
+server.use(jwt({
+    secret: jwksRsa.expressJwtSecret({
+        jwksUri: keysUrl
+    }),
+    issuer: process.env.TOKEN_ISSUER,
+    algorithms: ['RS256']
+}))
 
 server.get('/api/skills', async (req, res) => {
     const skills = await skillService.getAll()
-    let userSkills = new UserSkillMapper().Map(skills, req.user.email)
+    let userSkills = new UserSkillMapper().Map(skills, req.user.preferred_username)
     res.json(userSkills)
 })
 
