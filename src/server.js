@@ -5,6 +5,7 @@ import { getKeysUrl } from './openid-tools.js'
 import { skillService } from './skill/skill-service.js'
 import { freeTrackService } from './freetrack/freetrack-service.js'
 import UserSkillMapper from './skill/user-skill-mapper.js'
+import FreeTrackMapper from './freetrack/freetrack-mapper.js'
 import appInsights from 'applicationinsights'
 import jwt from 'express-jwt'
 import jwksRsa from 'jwks-rsa'
@@ -39,7 +40,8 @@ server.get('/api/skills', async (req, res) => {
 })
 
 server.get('/api/freetrack', async (req, res) => {
-    const freetrack = await freeTrackService.getAll()
+    let freetrack = await freeTrackService.getAll()
+    freetrack = new FreeTrackMapper().Map(freetrack)
     res.json(freetrack)
 })
 
