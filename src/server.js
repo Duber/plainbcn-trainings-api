@@ -2,8 +2,9 @@ import cors from 'cors'
 import express from 'express'
 import dotenv from 'dotenv'
 import { getKeysUrl } from './openid-tools.js'
-import { skillService } from './skill-service.js'
-import UserSkillMapper from './user-skill-mapper.js'
+import { skillService } from './skill/skill-service.js'
+import { freeTrackService } from './freetrack/freetrack-service.js'
+import UserSkillMapper from './skill/user-skill-mapper.js'
 import appInsights from 'applicationinsights'
 import jwt from 'express-jwt'
 import jwksRsa from 'jwks-rsa'
@@ -35,6 +36,11 @@ server.get('/api/skills', async (req, res) => {
     const skills = await skillService.getAll()
     let userSkills = new UserSkillMapper().Map(skills, req.user.preferred_username)
     res.json(userSkills)
+})
+
+server.get('/api/freetrack', async (req, res) => {
+    const freetrack = await freeTrackService.getAll()
+    res.json(freetrack)
 })
 
 server.listen(port, () => {

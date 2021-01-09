@@ -1,16 +1,16 @@
 import fetch from 'node-fetch'
 import cache from 'memory-cache'
 
-const SKILLS_CACHE_KEY = 'skills'
-const SKILLS_CACHE_DURATION = 300000
+const CACHE_KEY = 'skills'
+const CACHE_DURATION = 300000
 
 class SkillService {
     async getAll() {
-        const airtable_skill_url = `${process.env.AIRTABLE_SKILLS_URL}?api_key=${process.env.AIRTABLE_KEY}`
-        let skills = cache.get(SKILLS_CACHE_KEY)
-        if (!skills) {
-            skills = await fetch(airtable_skill_url).then((result) => result.json())
-            skills = skills.records.map((record) => {
+        const url = `${process.env.AIRTABLE_SKILLS_URL}?api_key=${process.env.AIRTABLE_KEY}`
+        let data = cache.get(CACHE_KEY)
+        if (!data) {
+            data = await fetch(url).then((result) => result.json())
+            data = data.records.map((record) => {
                 return {
                     id: record.id,
                     area: record.fields.Area,
@@ -20,9 +20,9 @@ class SkillService {
                     unfit: 'Unfit(Name)' in record.fields ? record.fields['Unfit(Name)'] : []
                 }
             })
-            cache.put(SKILLS_CACHE_KEY, skills, SKILLS_CACHE_DURATION)
+            cache.put(CACHE_KEY, data, CACHE_DURATION)
         }
-        return skills
+        return data
     }
 }
 export const skillService = new SkillService()
