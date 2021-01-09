@@ -13,13 +13,13 @@ class FreeTrackService {
             data = data.records.map((record) => {
                 return {
                     id: record.id,
-                    area: record.fields.Area,
-                    level: record.fields.Level,
-                    title: record.fields.Title,
-                    type: record.fields.Type,
-                    owners: record.fields['Owner(Name)'],
-                    notes: record.fields.Notes,
-                    scheduled: record.fields.Scheduled,
+                    area: record.fields.Area ?? '',
+                    level: record.fields.Level ?? '',
+                    title: record.fields.Title ?? '',
+                    type: record.fields.Type ?? '',
+                    owners: record.fields['Owner(Name)'] ?? [],
+                    notes: record.fields.Notes ?? null,
+                    scheduled: record.fields.Scheduled ?? null,
                     likes: (record.fields.Likes ?? []).length
                 }
             })
