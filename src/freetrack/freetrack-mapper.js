@@ -1,5 +1,5 @@
 export default class FreeTrackMapper {
-    Map(data){
+    Map(data, email){
         return data.records.map((record) => {
             return {
                 id: record.id,
@@ -10,7 +10,8 @@ export default class FreeTrackMapper {
                 owners: record.fields['Owner(Name)'] ?? [],
                 notes: record.fields.Notes ?? null,
                 scheduled: record.fields.Scheduled ?? null,
-                likes: (record.fields.Likes ?? []).length
+                likes: (record.fields.Likes ?? []).length,
+                liked: (record.fields['Likes(Name)'] ?? []).includes(email)
             }
         })
     }

@@ -16,8 +16,8 @@ class SkillService {
                     area: record.fields.Area,
                     level: record.fields.Level,
                     title: record.fields.Name,
-                    fit: 'Fit(Name)' in record.fields ? record.fields['Fit(Name)'] : [],
-                    unfit: 'Unfit(Name)' in record.fields ? record.fields['Unfit(Name)'] : []
+                    fit: record.fields['Fit(Name)'] ?? [],
+                    unfit: record.fields['Unfit(Name)'] ?? []
                 }
             })
             cache.put(CACHE_KEY, data, CACHE_DURATION)

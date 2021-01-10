@@ -41,7 +41,7 @@ server.get('/api/skills', async (req, res) => {
 
 server.get('/api/freetrack', async (req, res) => {
     let freetrack = await freeTrackService.getAll()
-    freetrack = new FreeTrackMapper().Map(freetrack)
+    freetrack = new FreeTrackMapper().Map(freetrack, req.user.preferred_username)
     res.json(freetrack)
 })
 
