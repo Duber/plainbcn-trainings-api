@@ -14,5 +14,31 @@ class FreeTrackService {
         }
         return data
     }
+
+    async get(id) {
+        const data = await this.getAll()
+        return data.records.find(i => i.id === id)
+    }
+
+    async updateLikes(id, likes) {
+        const url = `${process.env.AIRTABLE_FREETRACK_URL}?api_key=${process.env.AIRTABLE_KEY}`
+        const options = {
+            method: "PATCH",
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+            },
+            body: JSON.stringify({
+                records: [{
+                    id: id,
+                    fields: {
+                        Likes: likes
+                    }
+                }]
+            })
+        }
+        const res = await fetch(url, options)
+        if (!res.ok) throw new Error(`updateLikes with id ${id} and likes ${JSON.stringify(likes)} resulted in ${res.status}:${res.statusText}`)
+        cache.del(CACHE_KEY)
+    }
 }
 export const freeTrackService = new FreeTrackService()
