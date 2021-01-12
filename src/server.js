@@ -57,6 +57,7 @@ server.post('/api/freetrack/like', async (req, res) => {
     const user = await peopleService.get(req.user.preferred_username)
     const updatedLikes = likes.filter(i => i != user.id).concat([user.id])
     await freeTrackService.updateLikes(id, updatedLikes)
+    res.send()
 })
 
 server.post('/api/freetrack/unlike', async (req, res) => {
@@ -66,6 +67,7 @@ server.post('/api/freetrack/unlike', async (req, res) => {
     const likes = freeTrackRecord.fields.Likes ?? []
     const updatedLikes = likes.filter(i => i != user.id)
     await freeTrackService.updateLikes(id, updatedLikes)
+    res.send()
 })
 
 server.listen(port, () => {
