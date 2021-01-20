@@ -6,6 +6,7 @@ import { skillService } from './skill/skill-service.js'
 import { freeTrackService } from './freetrack/freetrack-service.js'
 import { peopleService } from './people/people-service.js'
 import UserSkillMapper from './skill/user-skill-mapper.js'
+import SkillFilter from './skill/skill-filter.js'
 import FreeTrackMapper from './freetrack/freetrack-mapper.js'
 import appInsights from 'applicationinsights'
 import jwt from 'express-jwt'
@@ -41,6 +42,7 @@ server.use(jwt({
 server.get('/api/skill', async (req, res) => {
     const skills = await skillService.getAll()
     let userSkills = new UserSkillMapper().Map(skills, req.user.preferred_username)
+    userSkills = new SkillFilter().Filter(userSkills)
     res.json(userSkills)
 })
 

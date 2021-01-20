@@ -10,16 +10,6 @@ class SkillService {
         let data = cache.get(CACHE_KEY)
         if (!data) {
             data = await fetch(url).then((result) => result.json())
-            data = data.records.map((record) => {
-                return {
-                    id: record.id,
-                    area: record.fields.Area,
-                    level: record.fields.Level,
-                    title: record.fields.Name,
-                    fit: record.fields['Fit(Email)'] ?? [],
-                    unfit: record.fields['Unfit(Email)'] ?? []
-                }
-            })
             cache.put(CACHE_KEY, data, CACHE_DURATION)
         }
         return data
