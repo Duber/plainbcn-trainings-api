@@ -7,7 +7,7 @@ export default class FreeTrackMapper {
                 level: record.fields.Level ?? '',
                 title: record.fields.Title ?? '',
                 type: record.fields.Type ?? '',
-                owners: record.fields['Owner(Email)'] ?? [],
+                owner: record.fields['Owner(Email)'] ?? null,
                 notes: record.fields.Notes ?? null,
                 scheduled: record.fields.Scheduled ?? null,
                 likes: (record.fields.Likes ?? []).length,
