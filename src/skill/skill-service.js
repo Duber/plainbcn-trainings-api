@@ -18,8 +18,8 @@ class SkillService {
     async updateEvaluation(skillId, userId, isAccomplished) {
         const data = await this.getAll()
         const skill = data.records.find(d=> d.id === skillId)
-        let fit = skill.fields.fit ?? []
-        let unfit = skill.fields.unfit ?? []
+        let fit = skill.fields.Fit ?? []
+        let unfit = skill.fields.Unfit ?? []
 
         fit = fit.filter(s => s !== userId)
         unfit = unfit.filter(s => s !== userId)
