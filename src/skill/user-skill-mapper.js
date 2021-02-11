@@ -7,7 +7,8 @@ export default class UserSkillMapper {
                 level: record.fields.Level,
                 title: record.fields.Name,
                 scope: record.fields.Scope ?? null,
-                accomplished: isAccomplished(record, email)
+                accomplished: isAccomplished(record, email),
+                published: record.fields.Published
             }
         })
     }
