@@ -46,6 +46,14 @@ server.get('/api/skill', async (req, res) => {
     res.json(userSkills)
 })
 
+server.patch('/api/skill/:id', async (req, res) => {
+    const id = req.params.id
+    const body = req.body
+    const user = await peopleService.get(req.user.preferred_username)
+    await skillService.updateEvaluation(id, user.id, body.isAccomplished)
+    res.send()
+})
+
 server.get('/api/freetrack', async (req, res) => {
     let freetrack = await freeTrackService.getAll()
     freetrack = new FreeTrackMapper().Map(freetrack, req.user.preferred_username)

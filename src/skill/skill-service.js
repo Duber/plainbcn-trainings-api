@@ -14,5 +14,43 @@ class SkillService {
         }
         return data
     }
+
+    async updateEvaluation(skillId, userId, isAccomplished) {
+        const data = await this.getAll()
+        const skill = data.records.find(d=> d.id === skillId)
+        let fit = skill.fields.fit ?? []
+        let unfit = skill.fields.unfit ?? []
+
+        fit = fit.filter(s => s !== userId)
+        unfit = unfit.filter(s => s !== userId)
+        
+        if (isAccomplished === null){
+
+        } else if (isAccomplished){
+            fit.push(userId)
+        } else {
+            unfit.push(userId)
+        }
+
+        const url = `${process.env.AIRTABLE_SKILLS_URL}?api_key=${process.env.AIRTABLE_KEY}`
+        const options = {
+            method: "PATCH",
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+            },
+            body: JSON.stringify({
+                records: [{
+                    id: skillId,
+                    fields: {
+                        Fit: fit,
+                        Unfit: unfit
+                    }
+                }]
+            })
+        }
+        const res = await fetch(url, options)
+        if (!res.ok) throw new Error(`updateEvaluation with skillId ${skillId} and userId ${userId} and accomplished ${isAccomplished} resulted in ${res.status}:${res.statusText}`)
+        cache.del(CACHE_KEY)
+    }
 }
 export const skillService = new SkillService()
