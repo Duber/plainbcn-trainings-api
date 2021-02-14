@@ -53,9 +53,12 @@ server.patch('/api/user/me', async (req, res) => {
 
 server.get('/api/skill', async (req, res) => {
     const skills = await skillService.getAll()
-    let userSkills = new UserSkillMapper().Map(skills, req.user.preferred_username)
-    userSkills = new SkillFilter().Filter(userSkills)
-    res.json(userSkills)
+    res.json(skills)
+})
+
+server.get('/api/skill/:id', async (req, res) => {
+    const skill = await skillService.get(req.params.id)
+    res.json(skill)
 })
 
 server.get('/api/freetrack', async (req, res) => {
