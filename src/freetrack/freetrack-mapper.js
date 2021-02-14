@@ -1,18 +1,15 @@
 export default class FreeTrackMapper {
-    Map(data, email){
-        return data.records.map((record) => {
-            return {
-                id: record.id,
-                area: record.fields.Area ?? '',
-                level: record.fields.Level ?? '',
-                title: record.fields.Title ?? '',
-                type: record.fields.Type ?? '',
-                owner: record.fields['Owner(Email)'] ?? null,
-                notes: record.fields.Notes ?? null,
-                scheduled: record.fields.Scheduled ?? null,
-                likes: (record.fields.Likes ?? []).length,
-                liked: (record.fields['Likes(Email)'] ?? []).includes(email)
-            }
-        })
+    static Map(data) {
+        return {
+            id: data.id,
+            area: data.fields.Area ?? '',
+            level: data.fields.Level ?? '',
+            title: data.fields.Title ?? '',
+            type: data.fields.Type ?? '',
+            owner: data.fields['Owner(Email)'] ?? null,
+            notes: data.fields.Notes ?? null,
+            scheduled: data.fields.Scheduled ?? null,
+            likes: (data.fields.Likes ?? []).length
+        }
     }
 }

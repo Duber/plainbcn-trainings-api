@@ -5,9 +5,6 @@ import { getKeysUrl } from './openid-tools.js'
 import { skillService } from './skill/skill-service.js'
 import { freeTrackService } from './freetrack/freetrack-service.js'
 import { peopleService } from './people/people-service.js'
-import UserSkillMapper from './skill/user-skill-mapper.js'
-import SkillFilter from './skill/skill-filter.js'
-import FreeTrackMapper from './freetrack/freetrack-mapper.js'
 import appInsights from 'applicationinsights'
 import jwt from 'express-jwt'
 import jwksRsa from 'jwks-rsa'
@@ -63,28 +60,7 @@ server.get('/api/skill/:id', async (req, res) => {
 
 server.get('/api/freetrack', async (req, res) => {
     let freetrack = await freeTrackService.getAll()
-    freetrack = new FreeTrackMapper().Map(freetrack, req.user.preferred_username)
     res.json(freetrack)
-})
-
-server.post('/api/freetrack/like', async (req, res) => {
-    const id = req.body.id
-    const freeTrackRecord = await freeTrackService.get(id)
-    const likes = freeTrackRecord.fields.Likes ?? []
-    const user = await peopleService.get(req.user.preferred_username)
-    const updatedLikes = likes.filter(i => i != user.id).concat([user.id])
-    await freeTrackService.updateLikes(id, updatedLikes)
-    res.send()
-})
-
-server.post('/api/freetrack/unlike', async (req, res) => {
-    const id = req.body.id
-    const freeTrackRecord = await freeTrackService.get(id)
-    const user = await peopleService.get(req.user.preferred_username)
-    const likes = freeTrackRecord.fields.Likes ?? []
-    const updatedLikes = likes.filter(i => i != user.id)
-    await freeTrackService.updateLikes(id, updatedLikes)
-    res.send()
 })
 
 server.listen(port, () => {
