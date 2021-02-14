@@ -11,9 +11,42 @@ class PeopleService {
         let user = cache.get(cacheKey)
         if (!user) {
             const url = `${process.env.AIRTABLE_PEOPLE_URL}?api_key=${process.env.AIRTABLE_KEY}&filterByFormula={Email}="${email}"`
-            user = await fetch(url).then((result) => result.json())
-            user = user.records.map(PeopleMapper.Map)[0]
+            const response = await fetch(url).then((result) => result.json())
+            if (response.records.length === 0) throw { name: "UserNotFound" }
+            user = response.records.map(PeopleMapper.Map)[0]
             cache.put(cacheKey, user, CACHE_DURATION)
+        }
+        return user
+    }
+
+    async create(email) {
+        const url = `${process.env.AIRTABLE_PEOPLE_URL}?api_key=${process.env.AIRTABLE_KEY}`
+        const options = {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+            },
+            body: JSON.stringify({
+                records: [{
+                    fields: {
+                        Email: email
+                    }
+                }]
+            })
+        }
+        const res = await fetch(url, options)
+        if (!res.ok) throw new Error(`PeopleService.Create for email ${email} failed with status: ${res.status}:${res.statusText}`)
+    }
+
+    async getOrCreate(email) {
+        let user
+        try {
+            user = await this.get(email)
+        } catch (error) {
+            if (error.name === "UserNotFound") {
+                await this.create(email)
+                user = await this.get(email)
+            }
         }
         return user
     }

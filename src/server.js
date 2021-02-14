@@ -37,7 +37,7 @@ server.use(jwt({
 }))
 
 server.get('/api/user/me', async (req, res) => {
-    const user = await peopleService.get(req.user.preferred_username)
+    const user = await peopleService.getOrCreate(req.user.preferred_username)
     res.json(user)
 })
 
