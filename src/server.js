@@ -39,19 +39,23 @@ server.use(jwt({
     algorithms: ['RS256']
 }))
 
+server.get('/api/user/me', async (req, res) => {
+    const user = await peopleService.get(req.user.preferred_username)
+    res.json(user)
+})
+
+server.patch('/api/user/me', async (req, res) => {
+    const data = req.body
+    const user = await peopleService.get(req.user.preferred_username)
+    await peopleService.patch(user.id, data)
+    res.send()
+})
+
 server.get('/api/skill', async (req, res) => {
     const skills = await skillService.getAll()
     let userSkills = new UserSkillMapper().Map(skills, req.user.preferred_username)
     userSkills = new SkillFilter().Filter(userSkills)
     res.json(userSkills)
-})
-
-server.patch('/api/skill/:id', async (req, res) => {
-    const id = req.params.id
-    const body = req.body
-    const user = await peopleService.get(req.user.preferred_username)
-    await skillService.updateEvaluation(id, user.id, body.isAccomplished)
-    res.send()
 })
 
 server.get('/api/freetrack', async (req, res) => {
