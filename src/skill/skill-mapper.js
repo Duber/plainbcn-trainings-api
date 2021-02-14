@@ -6,7 +6,7 @@ export default class SkillMapper {
             level: skill.fields.Level,
             title: skill.fields.Name,
             scope: skill.fields.Scope ?? null,
-            published: skill.fields.Published
+            published: skill.fields.Published ?? false
         }
     }
 }
