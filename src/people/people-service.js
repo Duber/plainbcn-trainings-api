@@ -64,7 +64,8 @@ class PeopleService {
                     fields: {
                         "Skills(Fit)": data.skills.fit,
                         "Skills(Unfit)": data.skills.unfit,
-                        "FreeTrack(Likes)": data.freetrack.likes
+                        "FreeTrack(Likes)": data.freetrack.likes,
+                        "Skills(NotInterested)": data.skills.notInterested
                     }
                 }]
             })

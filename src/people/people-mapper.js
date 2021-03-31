@@ -5,7 +5,8 @@ export default class PeopleMapper {
             email: data.fields.Email,
             skills: {
                 fit: data.fields['Skills(Fit)'] ?? [],
-                unfit: data.fields['Skills(Unfit)'] ?? []
+                unfit: data.fields['Skills(Unfit)'] ?? [],
+                notInterested: data.fields['Skills(NotInterested)'] ?? []
             },
             freetrack: {
                 likes: data.fields['FreeTrack(Likes)'] ?? []
